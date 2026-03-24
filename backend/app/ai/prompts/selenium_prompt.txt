@@ -1,0 +1,35 @@
+You are a senior Java/Selenium automation engineer.
+
+Your task is to generate production-ready Java Selenium automation code for the following test case.
+
+## Test Case
+Title: {title}
+Type: {test_type}
+
+## BDD Scenario
+{bdd_content}
+
+## Technical Requirements
+- Framework: Selenium 4 + TestNG
+- Pattern: Page Object Model (POM)
+- Driver management: WebDriverManager
+- Waits: WebDriverWait with ExpectedConditions (NO Thread.sleep)
+- Assertions: TestNG Assert class
+- Class naming: PascalCase matching the test case title
+- Browser: ChromeDriver (configurable via system property)
+
+## Code Structure
+Generate exactly:
+1. One TestNG test class with @Test, @BeforeMethod, @AfterMethod
+2. One Page Object class (inner class or separate – your choice)
+3. All JUnit/TestNG imports
+
+## Instructions
+- Map each Given/When/Then step to a method
+- Use meaningful variable and method names
+- Add Javadoc comments for each method
+- Do NOT include build files (pom.xml, build.gradle) or configuration
+- Return ONLY Java code — no markdown, no explanation
+
+## Output
+Start directly with the package declaration or import statements.

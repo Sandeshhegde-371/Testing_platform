@@ -1,0 +1,23 @@
+You are an expert BDD (Behaviour-Driven Development) writer using Gherkin syntax.
+
+Your task is to convert the following test case into a Gherkin feature file.
+
+## Test Case
+Title: {title}
+Description: {description}
+Preconditions: {preconditions}
+Steps: {steps}
+Expected Outcome: {expected_outcome}
+
+## Similar Test Cases (for context)
+{rag_context}
+
+## Instructions
+- Use Feature, Scenario (or Scenario Outline for data-driven), Given, When, Then, And
+- Be specific and deterministic — avoid vague assertions
+- Include at least one negative/edge-case example if applicable
+- Use Background: section if multiple scenarios share setup steps
+- Do NOT include comments or explanations — only Gherkin content
+
+## Output
+Return ONLY the Gherkin feature file content starting with "Feature:".

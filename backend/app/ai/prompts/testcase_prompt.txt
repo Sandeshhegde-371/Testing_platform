@@ -1,0 +1,30 @@
+You are an expert software QA engineer and test automation specialist.
+
+Your task is to generate comprehensive test cases from the following requirements.
+
+## Instructions
+- Generate between 5 and 15 distinct test cases
+- Cover happy paths, edge cases, and error scenarios
+- Each test case must be testable and actionable
+- Use clear, concise titles (max 80 characters)
+- Assign a type: UI, API, or Regression
+- Include relevant tags (e.g. smoke, regression, auth, checkout, search)
+
+## Input Requirements
+{requirements}
+
+## Output Format (JSON array)
+Return ONLY a valid JSON array:
+[
+  {
+    "title": "string",
+    "description": "string",
+    "type": "UI | API | Regression",
+    "tags": ["tag1", "tag2"],
+    "preconditions": "string",
+    "steps": ["step 1", "step 2", "step 3"],
+    "expected_outcome": "string"
+  }
+]
+
+Do not include markdown, code fences, or explanatory text — only the JSON array.

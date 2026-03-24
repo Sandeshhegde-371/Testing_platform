@@ -1,0 +1,104 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml
+# Local development stack: API + PostgreSQL + Redis + Celery + Flower
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: "3.9"
+
+services:
+
+  # ── FastAPI Application ──────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      target: runtime
+    container_name: testai_api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app/app          # hot reload in dev
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── Celery Worker ────────────────────────────────────────────────────────────
+  worker:
+    build:
+      context: .
+      target: runtime
+    container_name: testai_worker
+    volumes:
+      - ./app:/app/app
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - db
+    command: celery -A app.tasks.celery_app.celery worker --loglevel=info --concurrency=4
+
+  # ── Celery Beat (scheduled tasks) ─────────────────────────────────────────
+  beat:
+    build:
+      context: .
+      target: runtime
+    container_name: testai_beat
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    command: celery -A app.tasks.celery_app.celery beat --loglevel=info
+
+  # ── Flower (Celery monitoring) ────────────────────────────────────────────
+  flower:
+    build:
+      context: .
+      target: runtime
+    container_name: testai_flower
+    ports:
+      - "5555:5555"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    command: celery -A app.tasks.celery_app.celery flower --port=5555
+
+  # ── PostgreSQL Database ───────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: testai_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: testai
+      POSTGRES_PASSWORD: testai_pass
+      POSTGRES_DB: testai_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U testai"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: testai_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:
